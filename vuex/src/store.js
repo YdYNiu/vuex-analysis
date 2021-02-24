@@ -6,7 +6,7 @@ import { forEachValue, isObject, isPromise, assert, partial } from './util'
 let Vue // bind on install
 
 export class Store {
-  constructor (options = {}) {
+  constructor(options = {}) {
     // Auto install if it is not done yet and `window` has `Vue`.
     // To allow users to avoid auto-installation in some cases,
     // this code should be placed here. See #731
@@ -75,10 +75,10 @@ export class Store {
     // 为何要这样绑定 ?
     // 说明调用commit和dispach 的 this 不一定是 store 实例
     // 这是确保这两个函数里的this是store实例
-    this.dispatch = function boundDispatch (type, payload) {
+    this.dispatch = function boundDispatch(type, payload) {
       return dispatch.call(store, type, payload)
     }
-    this.commit = function boundCommit (type, payload, options) {
+    this.commit = function boundCommit(type, payload, options) {
       return commit.call(store, type, payload, options)
     }
 
@@ -115,19 +115,19 @@ export class Store {
     }
   }
 
-  get state () {
+  get state() {
     return this._vm._data.$$state
   }
 
   // 设置 state 非生产环境报错
-  set state (v) {
+  set state(v) {
     if (process.env.NODE_ENV !== 'production') {
       // 使用 replaceState() 替换
       assert(false, `use store.replaceState() to explicit replace store state.`)
     }
   }
 
-  commit (_type, _payload, _options) {
+  commit(_type, _payload, _options) {
     // check object-style commit
     // 统一成对象风格
     /**
@@ -158,7 +158,7 @@ export class Store {
       return
     }
     this._withCommit(() => {
-      entry.forEach(function commitIterator (handler) {
+      entry.forEach(function commitIterator(handler) {
         handler(payload)
       })
     })
@@ -175,7 +175,7 @@ export class Store {
     }
   }
 
-  dispatch (_type, _payload) {
+  dispatch(_type, _payload) {
     // check object-style dispatch
     // 获取到type和payload参数
     const {
@@ -227,11 +227,11 @@ export class Store {
     })
   }
 
-  subscribe (fn) {
+  subscribe(fn) {
     return genericSubscribe(fn, this._subscribers)
   }
 
-  subscribeAction (fn) {
+  subscribeAction(fn) {
     const subs = typeof fn === 'function' ? { before: fn } : fn
     return genericSubscribe(subs, this._actionSubscribers)
   }
@@ -242,7 +242,7 @@ export class Store {
    * @param {Function} cb 回调
    * @param {Object} options 参数对象
    */
-  watch (getter, cb, options) {
+  watch(getter, cb, options) {
     if (process.env.NODE_ENV !== 'production') {
       assert(typeof getter === 'function', `store.watch only accepts a function.`)
     }
@@ -251,7 +251,7 @@ export class Store {
 
   // 这个函数仅在 devtool 调试工具中用到。
   // 替换 `store` 的根状态，仅用状态合并或时光旅行调试。
-  replaceState (state) {
+  replaceState(state) {
     this._withCommit(() => {
       this._vm._data.$$state = state
     })
@@ -263,7 +263,7 @@ export class Store {
    * @param {Object} rawModule 原始未加工的模块
    * @param {Object} options 参数选项
    */
-  registerModule (path, rawModule, options = {}) {
+  registerModule(path, rawModule, options = {}) {
     // 如果 path 是字符串，转成数组
     if (typeof path === 'string') path = [path]
 
@@ -288,7 +288,7 @@ export class Store {
    * 注销模块
    * @param {Array|String} path 路径
    */
-  unregisterModule (path) {
+  unregisterModule(path) {
     // 如果 path 是字符串，转成数组
     if (typeof path === 'string') path = [path]
 
@@ -310,14 +310,14 @@ export class Store {
   }
 
   // 热加载
-  hotUpdate (newOptions) {
+  hotUpdate(newOptions) {
     this._modules.update(newOptions)
     resetStore(this, true)
   }
 
   // 内部方法 _withCommit _committing 变量 主要是给严格模式下
   // enableStrictMode 函数 监控是否是通过这个函数修改，不是则报错。
-  _withCommit (fn) {
+  _withCommit(fn) {
     // 存储committing 变量
     const committing = this._committing
     // committing 为 true
@@ -329,7 +329,7 @@ export class Store {
   }
 }
 
-function genericSubscribe (fn, subs) {
+function genericSubscribe(fn, subs) {
   if (subs.indexOf(fn) < 0) {
     subs.push(fn)
   }
@@ -346,7 +346,7 @@ function genericSubscribe (fn, subs) {
  * @param {Object} store Store 实例对象
  * @param {Boolean} hot 热加载
  */
-function resetStore (store, hot) {
+function resetStore(store, hot) {
   // 重置 _actions 为空对象
   store._actions = Object.create(null)
   // 重置 _mutations 为空对象
@@ -364,7 +364,7 @@ function resetStore (store, hot) {
   resetStoreVM(store, state, hot)
 }
 
-function resetStoreVM (store, state, hot) {
+function resetStoreVM(store, state, hot) {
 
   // 存储一份老的Vue实例对象 _vm
   const oldVm = store._vm
@@ -444,7 +444,7 @@ function resetStoreVM (store, state, hot) {
   }
 }
 
-function installModule (store, rootState, path, module, hot) {
+function installModule(store, rootState, path, module, hot) {
   // 是根模块
   const isRoot = !path.length
   // 命名空间 字符串
@@ -577,7 +577,7 @@ function installModule (store, rootState, path, module, hot) {
  * @param {String} namespace 命名空间
  * @param {Array} path 路径
  */
-function makeLocalContext (store, namespace, path) {
+function makeLocalContext(store, namespace, path) {
   // 声明变量 没有命名空间
   const noNamespace = namespace === ''
 
@@ -648,7 +648,7 @@ function makeLocalContext (store, namespace, path) {
   return local
 }
 
-function makeLocalGetters (store, namespace) {
+function makeLocalGetters(store, namespace) {
   // _makeLocalGettersCache 缓存是vuex v3.1.2中 加的
   // 如果不存在getters本地缓存中不存在，才执行下面的代码
   // 如果存在直接返回
@@ -702,11 +702,11 @@ function makeLocalGetters (store, namespace) {
  * @param {Function} handler 用户自定义的函数
  * @param {Object} local local 对象
  */
-function registerMutation (store, type, handler, local) {
+function registerMutation(store, type, handler, local) {
   // 收集的所有的mutations找对应的mutation函数，没有就赋值空数组
   const entry = store._mutations[type] || (store._mutations[type] = [])
   // 最后 mutation
-  entry.push(function wrappedMutationHandler (payload) {
+  entry.push(function wrappedMutationHandler(payload) {
     /**
      * mutations: {
      *    pushProductToCart (state, { id }) {
@@ -726,10 +726,10 @@ function registerMutation (store, type, handler, local) {
 * @param {Function} handler 用户自定义的函数
 * @param {Object} local local 对象
 */
-function registerAction (store, type, handler, local) {
+function registerAction(store, type, handler, local) {
   const entry = store._actions[type] || (store._actions[type] = [])
   // payload 是actions函数的第二个参数
-  entry.push(function wrappedActionHandler (payload) {
+  entry.push(function wrappedActionHandler(payload) {
     /**
      * 也就是为什么用户定义的actions中的函数第一个参数有
      *  { dispatch, commit, getters, state, rootGetters, rootState } 的原因
@@ -782,7 +782,7 @@ function registerAction (store, type, handler, local) {
  * @examples  比如 cartProducts: (state, getters, rootState, rootGetters) => {}
  * @param {Object} local 本地 local 对象
  */
-function registerGetter (store, type, rawGetter, local) {
+function registerGetter(store, type, rawGetter, local) {
   // 类型如果已经存在，报错：已经存在
   if (store._wrappedGetters[type]) {
     if (process.env.NODE_ENV !== 'production') {
@@ -791,7 +791,7 @@ function registerGetter (store, type, rawGetter, local) {
     return
   }
   // 否则：赋值
-  store._wrappedGetters[type] = function wrappedGetter (store) {
+  store._wrappedGetters[type] = function wrappedGetter(store) {
     /**
      * 这也就是为啥 getters 中能获取到  (state, getters, rootState, rootGetters)  这些值的原因
      * getters = {
@@ -810,7 +810,7 @@ function registerGetter (store, type, rawGetter, local) {
 }
 // 开启严格模式下，深度监控 state 的变化
 // 如果 state 不是通过 this._withCommit() 方法修改，则报错。
-function enableStrictMode (store) {
+function enableStrictMode(store) {
   store._vm.$watch(function () { return this._data.$$state }, () => {
     if (process.env.NODE_ENV !== 'production') {
       assert(store._committing, `do not mutate vuex store state outside mutation handlers.`)
@@ -819,14 +819,14 @@ function enableStrictMode (store) {
 }
 
 // 根据路径来获取嵌套的state
-function getNestedState (state, path) {
+function getNestedState(state, path) {
   return path.length
     ? path.reduce((state, key) => state[key], state)
     : state
 }
 
 // 统一成对象风格
-function unifyObjectStyle (type, payload, options) {
+function unifyObjectStyle(type, payload, options) {
   /**
     * 支持多种方式
     * 最后返回  { type, payload, options }
@@ -853,7 +853,7 @@ function unifyObjectStyle (type, payload, options) {
   return { type, payload, options }
 }
 
-export function install (_Vue) {
+export function install(_Vue) {
   // Vue 已经存在并且相等，说明已经Vuex.use过
   if (Vue && _Vue === Vue) {
     // 非生产环境报错，vuex已经安装，代码继续执行
